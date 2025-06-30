@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-color: #e0e0e0; /* A common neumorphic background color */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .neumo-container {
+            background: #e0e0e0;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 9px 9px 18px #bebebe,
+                        -9px -9px 18px #ffffff;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .neumo-input {
+            background: #e0e0e0;
+            border: none;
+            outline: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #333;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+            transition: all 0.2s ease-in-out;
+            width: 100%;
+        }
+
+        .neumo-input:focus {
+            box-shadow: inset 2px 2px 5px #bebebe,
+                        inset -2px -2px 5px #ffffff,
+                        0 0 0 2px #6366f1; /* Tailwind's indigo-500 for focus ring */
+        }
+
+        .neumo-button {
+            background: #e0e0e0;
+            border: none;
+            outline: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 6px 6px 12px #bebebe,
+                        -6px -6px 12px #ffffff;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .neumo-button:hover {
+            box-shadow: 3px 3px 6px #bebebe,
+                        -3px -3px 6px #ffffff;
+            transform: translateY(2px);
+        }
+
+        .neumo-button:active {
+            box-shadow: inset 3px 3px 6px #bebebe,
+                        inset -3px -3px 6px #ffffff;
+            transform: translateY(0);
+        }
+
+        .neumo-label {
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .neumo-text-button {
+            background: none;
+            border: none;
+            outline: none;
+            color: #4f46e5; /* Tailwind's indigo-600 */
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 5px 0;
+            transition: color 0.2s ease-in-out;
+        }
+
+        .neumo-text-button:hover {
+            color: #3730a3; /* A darker indigo on hover */
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="neumo-container">
+        <h2 class="text-3xl font-bold text-center mb-10 text-gray-700">Login to Your Account</h2>
+
+        <form id="loginForm">
+            <div class="mb-6">
+                <label for="email" class="neumo-label">Email</label>
+                <input type="email" id="email" name="email" class="neumo-input" placeholder="you@example.com" required>
+            </div>
+
+            <div class="mb-8">
+                <label for="password" class="neumo-label">Password</label>
+                <input type="password" id="password" name="password" class="neumo-input" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="neumo-button mb-6">Login</button>
+        </form>
+
+        <div class="text-center">
+            <p class="text-gray-600 mb-3">Don't have an account?</p>
+            <button id="signupButton" class="neumo-text-button">Sign Up</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupButton').addEventListener('click', function() {
+            console.log("Hello world");
+            // In a real application, you would typically redirect to a signup page here
+            // window.location.href = 'signup.html';
+        });
+
+        // Optional: Prevent default form submission for login to show it's a separate action
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            console.log("Login form submitted!");
+            // Add your login logic here
+        });
+    </script>
+</body>
+</html>

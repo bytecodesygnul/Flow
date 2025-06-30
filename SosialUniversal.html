@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Feed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e0e0e0; /* Neumorphic base background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Neumorphic Common Styles */
+        .neumo-soft {
+            background: #e0e0e0;
+            border-radius: 15px; /* Adjust as needed */
+            box-shadow: 6px 6px 12px #bebebe,
+                        -6px -6px 12px #ffffff;
+        }
+
+        .neumo-concave { /* For elements that appear pressed in */
+            background: #e0e0e0;
+            border-radius: 15px;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+        }
+
+        .neumo-input, .neumo-textarea {
+            background: #e0e0e0;
+            border: none;
+            outline: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #333;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+            transition: all 0.2s ease-in-out;
+            width: 100%;
+        }
+
+        .neumo-input:focus, .neumo-textarea:focus {
+            box-shadow: inset 2px 2px 5px #bebebe,
+                        inset -2px -2px 5px #ffffff,
+                        0 0 0 2px #6366f1; /* Tailwind's indigo-500 for focus ring */
+        }
+        .neumo-textarea {
+            resize: vertical; /* Allow vertical resizing */
+        }
+
+        .neumo-button {
+            background: #e0e0e0;
+            border: none;
+            outline: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 6px 6px 12px #bebebe,
+                        -6px -6px 12px #ffffff;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .neumo-button:hover {
+            box-shadow: 3px 3px 6px #bebebe,
+                        -3px -3px 6px #ffffff;
+            transform: translateY(1px);
+        }
+
+        .neumo-button:active {
+            box-shadow: inset 3px 3px 6px #bebebe,
+                        inset -3px -3px 6px #ffffff;
+            transform: translateY(0);
+        }
+
+        .neumo-icon-button {
+            background: #e0e0e0;
+            border-radius: 50%; /* For circular icons */
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 3px 3px 6px #bebebe,
+                        -3px -3px 6px #ffffff;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        .neumo-icon-button:hover {
+            box-shadow: 1px 1px 3px #bebebe,
+                        -1px -1px 3px #ffffff;
+            transform: translateY(1px);
+        }
+        .neumo-icon-button:active {
+            box-shadow: inset 2px 2px 4px #bebebe,
+                        inset -2px -2px 4px #ffffff;
+            transform: translateY(0);
+        }
+
+        /* Specific Feed Layout Styles */
+        .header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .feed-container {
+            max-width: 800px; /* Standard width for feed */
+            margin: 1rem auto;
+            padding: 2rem;
+            border-radius: 20px;
+            background: #e0e0e0;
+            box-shadow: 9px 9px 18px #bebebe,
+                        -9px -9px 18px #ffffff;
+            flex-grow: 1;
+        }
+
+        /* Story Section */
+        .stories-wrapper {
+            overflow-x: auto; /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch; /* For smooth iOS scrolling */
+            white-space: nowrap; /* Prevent items from wrapping */
+            padding: 10px 0;
+            margin-bottom: 2rem;
+            border-radius: 15px;
+            background: #e0e0e0;
+            box-shadow: inset 3px 3px 6px #bebebe,
+                        inset -3px -3px 6px #ffffff;
+        }
+
+        .story-circle {
+            display: inline-flex; /* Keep items in a row */
+            flex-direction: column;
+            align-items: center;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out;
+        }
+        .story-circle:hover {
+            transform: translateY(-3px);
+        }
+
+        .story-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #6366f1; /* Indigo border for active story */
+            padding: 2px; /* Space for the border */
+            box-shadow: 4px 4px 8px #bebebe, -4px -4px 8px #ffffff;
+        }
+        .story-avatar.seen {
+            border: 3px solid #ccc; /* Grey border for seen stories */
+        }
+        .story-circle p {
+            font-size: 0.75rem;
+            color: #555;
+            margin-top: 5px;
+            white-space: nowrap; /* Prevent name from wrapping */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 70px;
+        }
+
+        /* Create Post */
+        .create-post-container {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: #e0e0e0;
+            box-shadow: 7px 7px 14px #bebebe,
+                        -7px -7px 14px #ffffff;
+        }
+        .create-post-container .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            box-shadow: 2px 2px 4px #bebebe, -2px -2px 4px #ffffff;
+        }
+        .create-post-container textarea {
+            flex-grow: 1;
+            margin-right: 1rem;
+        }
+
+        /* Post Feed */
+        .post-card {
+            background: #e0e0e0;
+            border-radius: 20px;
+            box-shadow: 8px 8px 16px #bebebe,
+                        -8px -8px 16px #ffffff;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .post-header .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+            box-shadow: 2px 2px 4px #bebebe, -2px -2px 4px #ffffff;
+            cursor: pointer; /* To implement show profile/chat */
+        }
+        .post-header .username {
+            font-weight: bold;
+            color: #333;
+            cursor: pointer; /* To implement show profile/chat */
+        }
+        .post-header .timestamp {
+            font-size: 0.8rem;
+            color: #777;
+            margin-left: 5px;
+        }
+        .post-content img, .post-content video {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-top: 1rem;
+            box-shadow: inset 3px 3px 6px #bebebe, inset -3px -3px 6px #ffffff;
+        }
+        .post-text {
+            color: #444;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .post-actions {
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #d0d0d0;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+        .post-action-button {
+            display: flex;
+            align-items: center;
+            color: #666;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.2s ease-in-out;
+        }
+        .post-action-button:hover {
+            color: #4f46e5;
+        }
+        .post-action-button .material-icons {
+            margin-right: 5px;
+            font-size: 1.2rem;
+        }
+
+        /* Comment Section */
+        .comments-section {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #d0d0d0;
+        }
+        .comment-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        .comment-input-wrapper .user-avatar {
+            width: 35px;
+            height: 35px;
+        }
+        .comment-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .comment-item .comment-content {
+            background: #e8e8e8; /* Slightly different background for comments */
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            color: #444;
+            flex-grow: 1;
+            box-shadow: inset 2px 2px 4px #c9c9c9,
+                        inset -2px -2px 4px #ffffff;
+        }
+        .comment-item .comment-header {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        .comment-item .comment-text {
+            word-wrap: break-word; /* Ensure long comments wrap */
+        }
+
+        /* Media Editing Placeholders */
+        .media-editing-options {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background: #e0e0e0;
+            box-shadow: inset 3px 3px 6px #bebebe,
+                        inset -3px -3px 6px #ffffff;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .media-editing-options .neumo-button {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .feed-container {
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+            .stories-wrapper {
+                padding: 5px 0;
+            }
+            .story-avatar {
+                width: 50px;
+                height: 50px;
+            }
+            .create-post-container {
+                padding: 1rem;
+            }
+            .post-card {
+                padding: 1rem;
+            }
+            .post-header .user-avatar {
+                width: 40px;
+                height: 40px;
+            }
+            .post-actions {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="neumo-button p-2 rounded-full flex items-center justify-center">
+            <span class="material-icons text-gray-700">menu</span>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-700">My Feed</h2>
+        <div class="neumo-button p-2 rounded-full flex items-center justify-center">
+            <span class="material-icons text-gray-700">chat_bubble_outline</span>
+        </div>
+    </div>
+
+    <div class="feed-container">
+        <div class="stories-wrapper">
+            <div id="storiesList">
+                </div>
+        </div>
+
+        <div class="create-post-container">
+            <div class="flex items-center mb-4">
+                <img src="https://via.placeholder.com/45/6366f1/FFFFFF?text=You" alt="Your Avatar" class="user-avatar cursor-pointer" data-user-id="current_user">
+                <textarea id="postContentInput" class="neumo-input" placeholder="What's on your mind?" rows="3"></textarea>
+            </div>
+            <div class="media-editing-options">
+                <button class="neumo-button" id="uploadPhotoButton"><span class="material-icons text-base mr-2">image</span>Add Photo</button>
+                <input type="file" id="photoUploadInput" accept="image/*" class="hidden">
+
+                <button class="neumo-button" id="uploadVideoButton"><span class="material-icons text-base mr-2">videocam</span>Add Video</button>
+                <input type="file" id="videoUploadInput" accept="video/*" class="hidden">
+
+                <button class="neumo-button" id="editVideoButton"><span class="material-icons text-base mr-2">edit</span>Edit Video (Conceptual)</button>
+                <button class="neumo-button" id="addMusicButton"><span class="material-icons text-base mr-2">music_note</span>Add Music (Conceptual)</button>
+            </div>
+            <div class="mt-4 flex justify-end">
+                <button id="postStatusButton" class="neumo-button bg-indigo-500 text-white hover:bg-indigo-600">Post Status</button>
+            </div>
+        </div>
+
+        <div id="postFeed">
+            </div>
+    </div>
+
+    <script>
+        const storiesList = document.getElementById('storiesList');
+        const postFeed = document.getElementById('postFeed');
+        const postContentInput = document.getElementById('postContentInput');
+        const postStatusButton = document.getElementById('postStatusButton');
+        const photoUploadInput = document.getElementById('photoUploadInput');
+        const uploadPhotoButton = document.getElementById('uploadPhotoButton');
+        const videoUploadInput = document.getElementById('videoUploadInput');
+        const uploadVideoButton = document.getElementById('uploadVideoButton');
+
+        const editVideoButton = document.getElementById('editVideoButton');
+        const addMusicButton = document.getElementById('addMusicButton');
+
+        // Mock data for users and posts
+        const mockUsers = [
+            { id: 'u1', name: 'Alice', avatar: 'https://via.placeholder.com/60/FFD180/000000?text=A' },
+            { id: 'u2', name: 'Bob', avatar: 'https://via.placeholder.com/60/80DEEA/000000?text=B' },
+            { id: 'u3', name: 'Charlie', avatar: 'https://via.placeholder.com/60/C5E1A5/000000?text=C' },
+            { id: 'u4', name: 'Diana', avatar: 'https://via.placeholder.com/60/FFAB91/000000?text=D' },
+            { id: 'u5', name: 'Eve', avatar: 'https://via.placeholder.com/60/B39DDB/000000?text=E' },
+            { id: 'u6', name: 'Frank', avatar: 'https://via.placeholder.com/60/A7FFEB/000000?text=F' },
+            { id: 'u7', name: 'Grace', avatar: 'https://via.placeholder.com/60/E0F2F7/000000?text=G' },
+            { id: 'u8', name: 'Heidi', avatar: 'https://via.placeholder.com/60/F8BBD0/000000?text=H' },
+            { id: 'u9', name: 'Ivan', avatar: 'https://via.placeholder.com/60/FFF9C4/000000?text=I' },
+            { id: 'u10', name: 'Judy', avatar: 'https://via.placeholder.com/60/DCEDC8/000000?text=J' },
+            { id: 'u11', name: 'Kyle', avatar: 'https://via.placeholder.com/60/FFE0B2/000000?text=K' },
+            { id: 'u12', name: 'Liam', avatar: 'https://via.placeholder.com/60/B2EBF2/000000?text=L' },
+            { id: 'u13', name: 'Mia', avatar: 'https://via.placeholder.com/60/F0F4C3/000000?text=M' },
+            { id: 'u14', name: 'Noah', avatar: 'https://via.placeholder.com/60/FFCCBC/000000?text=N' },
+            { id: 'u15', name: 'Olivia', avatar: 'https://via.placeholder.com/60/D1C4E9/000000?text=O' },
+            { id: 'u16', name: 'Peter', avatar: 'https://via.placeholder.com/60/CFD8DC/000000?text=P' },
+            { id: 'u17', name: 'Quinn', avatar: 'https://via.placeholder.com/60/F48FB1/000000?text=Q' },
+            { id: 'u18', name: 'Rachel', avatar: 'https://via.placeholder.com/60/FFFDE7/000000?text=R' },
+            { id: 'u19', name: 'Sam', avatar: 'https://via.placeholder.com/60/BCAAA4/000000?text=S' },
+            { id: 'u20', name: 'Tina', avatar: 'https://via.placeholder.com/60/E1BEE7/000000?text=T' }
+        ];
+
+        let posts = [
+            { id: 'p1', userId: 'u1', content: 'Enjoying the beautiful sunset today!', media: 'https://via.placeholder.com/600x350/AEC6CF/FFFFFF?text=Sunset+View', type: 'image', timestamp: '2025-06-28T10:00:00Z', likes: 15, comments: [{ user: 'u2', text: 'Stunning!' }] },
+            { id: 'p2', userId: 'u3', content: 'Just finished a great workout!', media: null, type: 'text', timestamp: '2025-06-28T09:30:00Z', likes: 22, comments: [] },
+            { id: 'p3', userId: 'u5', content: 'New coding project alert! #webdev', media: 'https://via.placeholder.com/600x350/ADD8E6/000000?text=Coding+Setup', type: 'image', timestamp: '2025-06-28T08:00:00Z', likes: 10, comments: [{ user: 'u1', text: 'Good luck!' }, { user: 'u4', text: 'Looks cool!' }] },
+            { id: 'p4', userId: 'u7', content: 'Testing out some new video editing software. What do you guys use?', media: null, type: 'text', timestamp: '2025-06-27T18:00:00Z', likes: 8, comments: [] },
+            { id: 'p5', userId: 'u9', content: 'Nature walk this morning was so refreshing.', media: 'https://via.placeholder.com/600x350/90EE90/000000?text=Forest+Path', type: 'image', timestamp: '2025-06-27T15:00:00Z', likes: 30, comments: [] }
+            // Add more mock posts as needed for 20 total
+        ];
+
+        // Fill up to 20 posts for demonstration if less than 20
+        while (posts.length < 20) {
+            const randomUser = mockUsers[Math.floor(Math.random() * mockUsers.length)];
+            const postId = `p${posts.length + 1}`;
+            const isImage = Math.random() > 0.5;
+            posts.push({
+                id: postId,
+                userId: randomUser.id,
+                content: `This is a sample post from ${randomUser.name} number ${posts.length + 1}.`,
+                media: isImage ? `https://via.placeholder.com/600x350/${Math.floor(Math.random()*16777215).toString(16)}/FFFFFF?text=Image+${posts.length + 1}` : null,
+                type: isImage ? 'image' : 'text',
+                timestamp: new Date(Date.now() - Math.floor(Math.random() * 86400000 * 5)).toISOString(), // up to 5 days ago
+                likes: Math.floor(Math.random() * 50) + 1,
+                comments: []
+            });
+        }
+
+
+        // --- Story Generation ---
+        function generateStories() {
+            storiesList.innerHTML = ''; // Clear existing stories
+            mockUsers.forEach((user, index) => {
+                const storyDiv = document.createElement('div');
+                storyDiv.className = 'story-circle';
+                storyDiv.setAttribute('data-user-id', user.id);
+                storyDiv.setAttribute('data-user-name', user.name); // For chat/profile
+                storyDiv.innerHTML = `
+                    <img src="${user.avatar}" alt="${user.name}'s Story" class="story-avatar ${index % 3 === 0 ? '' : 'seen'}">
+                    <p>${user.name}</p>
+                `;
+                storiesList.appendChild(storyDiv);
+            });
+            attachUserProfileListeners(); // Attach listeners after creation
+        }
+
+        // --- Post Feed Generation ---
+        function generatePosts() {
+            postFeed.innerHTML = ''; // Clear existing posts
+            posts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by newest first
+
+            posts.forEach(post => {
+                const user = mockUsers.find(u => u.id === post.userId);
+                if (!user) return; // Skip if user not found
+
+                const postCard = document.createElement('div');
+                postCard.className = 'post-card';
+                postCard.setAttribute('data-post-id', post.id);
+
+                const mediaContent = post.media ?
+                    `<div class="mt-4"><img src="${post.media}" alt="Post Media" class="rounded-lg"></div>` : '';
+
+                postCard.innerHTML = `
+                    <div class="post-header">
+                        <img src="${user.avatar}" alt="${user.name}'s Avatar" class="user-avatar" data-user-id="${user.id}" data-user-name="${user.name}">
+                        <div>
+                            <span class="username" data-user-id="${user.id}" data-user-name="${user.name}">${user.name}</span>
+                            <span class="timestamp">${timeAgo(post.timestamp)}</span>
+                        </div>
+                    </div>
+                    <p class="post-text">${post.content}</p>
+                    ${mediaContent}
+                    <div class="post-actions">
+                        <div class="post-action-button" data-action="like">
+                            <span class="material-icons text-red-500">favorite</span><span>${post.likes} Likes</span>
+                        </div>
+                        <div class="post-action-button" data-action="comment">
+                            <span class="material-icons">chat_bubble_outline</span><span>${post.comments.length} Comments</span>
+                        </div>
+                        <div class="post-action-button" data-action="share">
+                            <span class="material-icons">share</span><span>Share</span>
+                        </div>
+                    </div>
+                    <div class="comments-section" data-post-id="${post.id}">
+                        <div class="comment-input-wrapper">
+                            <img src="https://via.placeholder.com/35/6366f1/FFFFFF?text=You" alt="Your Avatar" class="user-avatar">
+                            <input type="text" class="neumo-input comment-input" placeholder="Add a comment...">
+                            <button class="neumo-button add-comment-btn">Post</button>
+                        </div>
+                        <div class="comments-list">
+                            </div>
+                    </div>
+                `;
+                postFeed.appendChild(postCard);
+                renderComments(post.id, post.comments);
+            });
+            attachUserProfileListeners(); // Attach listeners after posts are created
+            attachCommentListeners(); // Attach comment input listeners
+            attachLikeListeners(); // Attach like listeners
+        }
+
+        // --- Comment Functionality ---
+        function renderComments(postId, comments) {
+            const commentsListDiv = document.querySelector(`.comments-section[data-post-id="${postId}"] .comments-list`);
+            commentsListDiv.innerHTML = '';
+            if (comments.length === 0) {
+                commentsListDiv.innerHTML = '<p class="text-gray-500 text-sm text-center mt-2">No comments yet.</p>';
+                return;
+            }
+            comments.forEach(comment => {
+                const commentUser = mockUsers.find(u => u.id === comment.user);
+                if (!commentUser) return;
+                const commentItem = document.createElement('div');
+                commentItem.className = 'comment-item';
+                commentItem.innerHTML = `
+                    <img src="${commentUser.avatar}" alt="${commentUser.name}'s Avatar" class="user-avatar w-8 h-8">
+                    <div class="comment-content">
+                        <div class="comment-header" data-user-id="${commentUser.id}" data-user-name="${commentUser.name}">${commentUser.name}</div>
+                        <div class="comment-text">${comment.text}</div>
+                    </div>
+                `;
+                commentsListDiv.appendChild(commentItem);
+            });
+            attachUserProfileListeners(); // Re-attach for new comments
+        }
+
+        function attachCommentListeners() {
+            document.querySelectorAll('.add-comment-btn').forEach(button => {
+                button.removeEventListener('click', handleAddComment); // Prevent duplicates
+                button.addEventListener('click', handleAddComment);
+            });
+        }
+
+        function handleAddComment(event) {
+            const button = event.currentTarget;
+            const commentsSection = button.closest('.comments-section');
+            const postId = commentsSection.dataset.postId;
+            const commentInput = commentsSection.querySelector('.comment-input');
+            const commentText = commentInput.value.trim();
+
+            if (commentText) {
+                // In a real app, send to backend and get a real user ID
+                const newComment = { user: 'current_user', text: commentText };
+                const post = posts.find(p => p.id === postId);
+                if (post) {
+                    post.comments.push(newComment);
+                    renderComments(postId, post.comments);
+                    commentInput.value = ''; // Clear input
+                    console.log(`Comment added to post ${postId}: "${commentText}"`);
+                }
+            } else {
+                alert("Comment cannot be empty!");
+            }
+        }
+
+        // --- Like Functionality ---
+        function attachLikeListeners() {
+            document.querySelectorAll('.post-action-button[data-action="like"]').forEach(button => {
+                button.removeEventListener('click', handleLikePost); // Prevent duplicates
+                button.addEventListener('click', handleLikePost);
+            });
+        }
+
+        function handleLikePost(event) {
+            const button = event.currentTarget;
+            const postId = button.closest('.post-card').dataset.postId;
+            const post = posts.find(p => p.id === postId);
+
+            if (post) {
+                // Toggle like status (simple increment/decrement for demo)
+                const isLiked = button.classList.toggle('active'); // Add/remove 'active' class for visual feedback
+                const likeCountSpan = button.querySelector('span:last-child'); // The span with the count
+
+                if (isLiked) {
+                    post.likes++;
+                    button.querySelector('.material-icons').textContent = 'favorite';
+                } else {
+                    post.likes--;
+                    button.querySelector('.material-icons').textContent = 'favorite_border';
+                }
+                likeCountSpan.textContent = `${post.likes} Likes`;
+                console.log(`Post ${postId} ${isLiked ? 'liked' : 'unliked'}. Total likes: ${post.likes}`);
+            }
+        }
+
+
+        // --- User Profile / Chat Logic (Activation on Photo/Name Click) ---
+        function attachUserProfileListeners() {
+            document.querySelectorAll('.user-avatar, .username, .story-circle').forEach(element => {
+                element.removeEventListener('click', handleUserInteraction); // Prevent duplicates
+                element.addEventListener('click', handleUserInteraction);
+            });
+            document.getElementById('current_user').addEventListener('click', handleUserInteraction); // Your avatar
+        }
+
+        function handleUserInteraction(event) {
+            const userId = event.currentTarget.dataset.userId;
+            const userName = event.currentTarget.dataset.userName;
+            console.log(`Hello world - User clicked: ${userName} (ID: ${userId})`);
+            console.log(`Conceptual: Showing profile for ${userName} and/or initiating new chat.`);
+            // In a real app, this would trigger navigation to a user profile page or open a chat window.
+        }
+
+        // --- Create Post Buttons (File Inputs) ---
+        uploadPhotoButton.addEventListener('click', () => photoUploadInput.click());
+        uploadVideoButton.addEventListener('click', () => videoUploadInput.click());
+
+        // Conceptual Media Editing Buttons
+        editVideoButton.addEventListener('click', () => {
+            console.log("Hello world - Edit Video Clicked (Conceptual)");
+            alert("Conceptual: This would open a video editing interface. (Replaces runtime)");
+        });
+        addMusicButton.addEventListener('click', () => {
+            console.log("Hello world - Add Music Clicked (Conceptual)");
+            alert("Conceptual: This would open a music library for your video. (Replaces runtime)");
+        });
+
+
+        // --- Utility Function: Time Ago ---
+        function timeAgo(dateString) {
+            const now = new Date();
+            const date = new Date(dateString);
+            const seconds = Math.floor((now - date) / 1000);
+
+            let interval = seconds / 31536000; // 365 days
+            if (interval > 1) { return Math.floor(interval) + "y ago"; }
+            interval = seconds / 2592000; // 30 days
+            if (interval > 1) { return Math.floor(interval) + "mo ago"; }
+            interval = seconds / 86400; // 24 hours
+            if (interval > 1) { return Math.floor(interval) + "d ago"; }
+            interval = seconds / 3600; // 1 hour
+            if (interval > 1) { return Math.floor(interval) + "h ago"; }
+            interval = seconds / 60; // 1 minute
+            if (interval > 1) { return Math.floor(interval) + "m ago"; }
+            return Math.floor(seconds) + "s ago";
+        }
+
+
+        // --- Initial Render ---
+        generateStories();
+        generatePosts();
+
+    </script>
+</body>
+</html>

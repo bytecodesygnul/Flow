@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumorphic Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        /* CSS Reset & Basic Styles */
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: #e0e0e0; /* Neumorphic base background */
+            color: #333;
+            overflow: hidden; /* Prevent body scroll, content will scroll */
+        }
+
+        /* Neumorphism Variables (for easier modification) */
+        :root {
+            --neumo-bg: #e0e0e0;
+            --neumo-light-shadow: #ffffff;
+            --neumo-dark-shadow: #bebebe;
+            --neumo-inset-light-shadow: #c7c7c7; /* Slightly darker for inset */
+            --neumo-inset-dark-shadow: #f9f9f9;  /* Slightly lighter for inset */
+            --border-radius: 8px;
+
+            /* Enhanced 3D shadow values */
+            --shadow-3d-dark-1: rgba(0, 0, 0, 0.2); /* Darker, closer shadow */
+            --shadow-3d-dark-2: rgba(0, 0, 0, 0.1); /* Lighter, further shadow */
+            --shadow-3d-light-1: rgba(255, 255, 255, 0.7); /* Brighter, closer highlight */
+            --shadow-3d-light-2: rgba(255, 255, 255, 0.3); /* Lighter, further highlight */
+        }
+
+        /* Helper class for neumorphic elements (extruded/raised) */
+        .neumorphic-raised {
+            background-color: var(--neumo-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 6px 6px 12px var(--neumo-dark-shadow), -6px -6px 12px var(--neumo-light-shadow);
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Helper class for neumorphic elements (pressed/inset) */
+        .neumorphic-pressed {
+            background-color: var(--neumo-bg);
+            border-radius: var(--border-radius);
+            box-shadow: inset 4px 4px 8px var(--neumo-dark-shadow), inset -4px -4px 8px var(--neumo-light-shadow);
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Specific styles for Dashboard components */
+        .dashboard-container {
+            display: flex;
+            height: 100vh;
+            overflow: hidden; /* Main container manages its overflow */
+        }
+
+        /* Top AppBar - Enhanced 3D effect */
+        .top-appbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            z-index: 1000;
+            box-sizing: border-box;
+            background-color: var(--neumo-bg);
+            /* Enhanced 3D shadow for top app bar */
+            box-shadow:
+                4px 4px 10px var(--shadow-3d-dark-1),     /* Main bottom-right dark shadow */
+                -4px -4px 10px var(--shadow-3d-light-1),  /* Main top-left light highlight */
+                8px 8px 15px var(--shadow-3d-dark-2),     /* Secondary bottom-right dark shadow */
+                -8px -8px 15px var(--shadow-3d-light-2);  /* Secondary top-left light highlight */
+        }
+
+        .appbar-logo {
+            height: 40px;
+            margin-right: 16px;
+            /* Optional: Add a subtle raised effect to the logo if it's a solid shape */
+            /* box-shadow: 2px 2px 4px var(--neumo-dark-shadow), -2px -2px 4px var(--neumo-light-shadow);
+            border-radius: var(--border-radius); */
+        }
+
+        .appbar-title {
+            flex-grow: 1;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        /* App Bar Icon Buttons - Circular 3D effect */
+        .appbar-icon-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%; /* Make them perfectly circular */
+            cursor: pointer;
+            color: #777;
+            margin-left: 16px;
+            background-color: var(--neumo-bg);
+            /* Circular 3D shadow for icon buttons */
+            box-shadow:
+                4px 4px 10px var(--shadow-3d-dark-1),
+                -4px -4px 10px var(--shadow-3d-light-1),
+                inset 1px 1px 2px rgba(0,0,0,0.1), /* Inner slight dark for depth */
+                inset -1px -1px 2px rgba(255,255,255,0.2); /* Inner slight light for depth */
+            transition: all 0.2s ease-in-out;
+        }
+
+        .appbar-icon-button:active {
+            box-shadow: inset 4px 4px 8px var(--neumo-dark-shadow), inset -4px -4px 8px var(--neumo-light-shadow);
+        }
+
+        /* Profile Avatar - Circular 3D effect */
+        .profile-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%; /* Make it perfectly circular */
+            margin-left: 16px;
+            /* Circular 3D shadow for avatar */
+            box-shadow:
+                3px 3px 8px var(--shadow-3d-dark-1),
+                -3px -3px 8px var(--shadow-3d-light-1);
+        }
+
+        .badge {
+            position: relative;
+        }
+
+        .badge::after {
+            content: '4';
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #f50057;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            min-width: 10px;
+            text-align: center;
+            line-height: 1;
+            box-shadow: 0 0 0 2px var(--neumo-bg);
+        }
+
+        /* Side Drawer (will be static, not interactive) */
+        .side-drawer {
+            width: 240px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 64px;
+            z-index: 999;
+            background-color: var(--neumo-bg);
+            /* Enhanced 3D shadow for drawer */
+            box-shadow:
+                6px 0 12px var(--shadow-3d-dark-1),
+                -6px 0 12px var(--shadow-3d-light-1); /* Subtle light shadow from left for depth */
+            box-sizing: border-box;
+        }
+
+        .drawer-header {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 8px;
+            box-sizing: border-box;
+        }
+
+        .drawer-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .drawer-list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            cursor: pointer;
+            color: #555;
+            transition: background-color 0.1s ease;
+            position: relative;
+        }
+
+        .drawer-list-item:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .drawer-list-item i {
+            margin-right: 16px;
+            color: #777;
+        }
+
+        .drawer-list-item.active {
+            color: #008080;
+            font-weight: 600;
+        }
+        
+        .drawer-list-item.active i {
+            color: #008080;
+        }
+
+        .drawer-list-item.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #008080;
+            border-top-right-radius: 2px;
+            border-bottom-right-radius: 2px;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #ccc;
+            margin: 8px 0;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex-grow: 1;
+            margin-left: 240px;
+            padding: 24px;
+            padding-top: calc(64px + 24px);
+            padding-bottom: calc(56px + 24px);
+            height: 100vh;
+            overflow-y: auto;
+            box-sizing: border-box;
+            background: linear-gradient(to bottom right, #ccfbf1, #ffffff);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 16px;
+            color: #444;
+            font-weight: 400;
+        }
+
+        .table-container {
+            height: 320px;
+            overflow-y: auto;
+            margin-top: 24px;
+            padding: 16px;
+            background-color: var(--neumo-bg);
+            border-radius: var(--border-radius);
+            /* Enhanced inset shadow for table container (card) */
+            box-shadow: inset 5px 5px 10px var(--shadow-3d-dark-1), inset -5px -5px 10px var(--shadow-3d-light-1);
+        }
+
+        /* Simple Table Placeholder */
+        .simple-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        .simple-table th, .simple-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .simple-table th {
+            background-color: rgba(0,0,0,0.03);
+            font-weight: 500;
+            color: #666;
+        }
+        .simple-table tr:hover {
+            background-color: rgba(0,0,0,0.02);
+        }
+
+        /* Bottom Navigation Bar - Enhanced 3D effect */
+        .bottom-navbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 56px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 1000;
+            background-color: var(--neumo-bg);
+            /* Enhanced 3D shadow for bottom nav bar (facing up) */
+            box-shadow:
+                4px -4px 10px var(--shadow-3d-dark-1),     /* Main top-right dark shadow */
+                -4px 4px 10px var(--shadow-3d-light-1),    /* Main bottom-left light highlight */
+                8px -8px 15px var(--shadow-3d-dark-2),     /* Secondary top-right dark shadow */
+                -8px 8px 15px var(--shadow-3d-light-2);    /* Secondary bottom-left light highlight */
+        }
+
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            height: 100%;
+            cursor: pointer;
+            color: #777;
+            font-size: 0.75rem;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .bottom-nav-item i {
+            margin-bottom: 4px;
+            font-size: 1.5rem;
+        }
+
+        .bottom-nav-item.active {
+            color: #008080;
+        }
+
+        /* Neumorphic "pressed" state for active bottom nav item (more pronounced) */
+        .bottom-nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            right: 5px;
+            bottom: 5px;
+            border-radius: var(--border-radius);
+            box-shadow:
+                inset 3px 3px 6px var(--neumo-dark-shadow),
+                inset -3px -3px 6px var(--neumo-light-shadow);
+            z-index: -1;
+        }
+
+        /* Responsive Adjustments (Basic) */
+        @media (max-width: 768px) {
+            .side-drawer {
+                width: 0;
+                overflow: hidden;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <header class="top-appbar">
+            <div class="appbar-icon-button">
+                <i class="material-icons">menu</i>
+            </div>
+            <img src="https://via.placeholder.com/40x40/008080/FFFFFF?text=LOGO" alt="Company Logo" class="appbar-logo">
+            <h1 class="appbar-title">Neumorphic Dashboard</h1>
+            <img src="https://via.placeholder.com/40/008080/FFFFFF?text=P" alt="Profile Picture" class="profile-avatar">
+            <div class="appbar-icon-button">
+                <span class="badge">
+                    <i class="material-icons">notifications</i>
+                </span>
+            </div>
+        </header>
+
+        <nav class="side-drawer">
+            <div class="drawer-header">
+                <div class="appbar-icon-button">
+                    <i class="material-icons">chevron_left</i>
+                </div>
+            </div>
+            <div class="divider"></div>
+            <ul class="drawer-list">
+                <li class="drawer-list-item active">
+                    <i class="material-icons">dashboard</i>
+                    <span>Dashboard</span>
+                </li>
+                <li class="drawer-list-item">
+                    <i class="material-icons">shopping_cart</i>
+                    <span>Orders</span>
+                </li>
+                <li class="drawer-list-item">
+                    <i class="material-icons">people</i>
+                    <span>Customers</span>
+                </li>
+                <li class="drawer-list-item">
+                    <i class="material-icons">bar_chart</i>
+                    <span>Reports</span>
+                </li>
+                <li class="drawer-list-item">
+                    <i class="material-icons">layers</i>
+                    <span>Integrations</span>
+                </li>
+            </ul>
+            <div class="divider"></div>
+            <ul class="drawer-list">
+                <li class="drawer-list-item">
+                    <i class="material-icons">assignment</i>
+                    <span>Current Month</span>
+                </li>
+                <li class="drawer-list-item">
+                    <i class="material-icons">assignment</i>
+                    <span>Last Quarter</span>
+                </li>
+                <li class="drawer-list-item">
+                    <i class="material-icons">assignment</i>
+                    <span>Year-end Sale</span>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div style="height: 64px;"></div> <h2 class="section-title">Orders Overview</h2>
+            <div class="table-container">
+                <h3 style="font-size: 1.2rem; margin-bottom: 12px; color: #555;">Recent Orders</h3>
+                <table class="simple-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Ship To</th>
+                            <th>Payment Method</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>2024-06-28</td>
+                            <td>John Doe</td>
+                            <td>Jakarta</td>
+                            <td>VISA</td>
+                            <td>$300.00</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-27</td>
+                            <td>Jane Smith</td>
+                            <td>Bandung</td>
+                            <td>MasterCard</td>
+                            <td>$150.50</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-26</td>
+                            <td>Peter Jones</td>
+                            <td>Surabaya</td>
+                            <td>AMEX</td>
+                            <td>$75.25</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-25</td>
+                            <td>Alice Brown</td>
+                            <td>Medan</td>
+                            <td>PayPal</td>
+                            <td>$500.00</td>
+                        </tr>
+                        <tr>
+                            <td>2024-06-24</td>
+                            <td>Bob White</td>
+                            <td>Denpasar</td>
+                            <td>VISA</td>
+                            <td>$99.99</td>
+                        </tr>
+                        <tr><td>2024-06-23</td><td>Charlie Green</td><td>Yogyakarta</td><td>MasterCard</td><td>$120.00</td></tr>
+                        <tr><td>2024-06-22</td><td>Diana Prince</td><td>Semarang</td><td>AMEX</td><td>$250.00</td></tr>
+                        <tr><td>2024-06-21</td><td>Clark Kent</td><td>Makassar</td><td>PayPal</td><td>$80.00</td></tr>
+                        <tr><td>2024-06-20</td><td>Lois Lane</td><td>Palembang</td><td>VISA</td><td>$400.00</td></tr>
+                        <tr><td>2024-06-19</td><td>Bruce Wayne</td><td>Bekasi</td><td>MasterCard</td><td>$60.00</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 class="section-title" style="margin-top: 48px;">Product Statistics</h2>
+            <div class="table-container">
+                <h3 style="font-size: 1.2rem; margin-bottom: 12px; color: #555;">Top Products</h3>
+                <table class="simple-table">
+                    <thead>
+                        <tr>
+                            <th>Product ID</th>
+                            <th>Product Name</th>
+                            <th>Units Sold</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>P001</td>
+                            <td>Smartphone X</td>
+                            <td>120</td>
+                            <td>$60,000</td>
+                        </tr>
+                        <tr>
+                            <td>P002</td>
+                            <td>Wireless Earbuds</td>
+                            <td>250</td>
+                            <td>$25,000</td>
+                        </tr>
+                        <tr>
+                            <td>P003</td>
+                            <td>Smart Watch</td>
+                            <td>80</td>
+                            <td>$16,000</td>
+                        </tr>
+                        <tr>
+                            <td>P004</td>
+                            <td>Laptop Pro</td>
+                            <td>30</td>
+                            <td>$45,000</td>
+                        </tr>
+                        <tr>
+                            <td>P005</td>
+                            <td>Gaming Mouse</td>
+                            <td>180</td>
+                            <td>$7,200</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="height: 24px;"></div>
+        </main>
+
+        <footer class="bottom-navbar">
+            <div class="bottom-nav-item active">
+                <i class="material-icons">home</i>
+                <span>Home</span>
+            </div>
+            <div class="bottom-nav-item">
+                <i class="material-icons">bar_chart</i>
+                <span>Reports</span>
+            </div>
+            <div class="bottom-nav-item">
+                <i class="material-icons">settings</i>
+                <span>Settings</span>
+            </div>
+            <div class="bottom-nav-item">
+                <i class="material-icons">person</i>
+                <span>Profile</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Layout</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e0e0e0; /* Neumorphic base background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative; /* For absolutely positioned navbar/notifications */
+        }
+
+        /* Neumorphic Common Styles */
+        .neumo-soft {
+            background: #e0e0e0;
+            border-radius: 15px; /* Adjust as needed */
+            box-shadow: 6px 6px 12px #bebebe,
+                        -6px -6px 12px #ffffff;
+        }
+
+        .neumo-concave { /* For elements that appear pressed in */
+            background: #e0e0e0;
+            border-radius: 15px;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+        }
+
+        .neumo-icon-button {
+            background: #e0e0e0;
+            border-radius: 50%; /* For circular icons */
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 6px 6px 12px #bebebe,
+                        -6px -6px 12px #ffffff;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .neumo-icon-button:hover {
+            box-shadow: 3px 3px 6px #bebebe,
+                        -3px -3px 6px #ffffff;
+            transform: translateY(1px);
+        }
+
+        .neumo-icon-button:active {
+            box-shadow: inset 3px 3px 6px #bebebe,
+                        inset -3px -3px 6px #ffffff;
+            transform: translateY(0);
+        }
+
+        /* Specific Layout Styles */
+        .top-bar {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            z-index: 10; /* Ensure it's above content */
+        }
+
+        .notification-icon {
+            position: relative;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444; /* Tailwind red-500 */
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 0.7rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            box-shadow: 2px 2px 4px #bebebe, -2px -2px 4px #ffffff;
+        }
+
+        .content-area {
+            flex-grow: 1; /* Takes up available space */
+            padding: 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 90px; /* Make space for the fixed navbar */
+        }
+
+        .bottom-navbar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%); /* Center horizontally */
+            width: 100%;
+            max-width: 400px; /* Max width for mobile-like appearance */
+            padding: 1rem 0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 20; /* Ensure it's on top of everything */
+            border-radius: 25px 25px 0 0; /* Rounded top corners */
+            box-shadow: 0px -6px 12px #bebebe,
+                        0px 6px 12px #ffffff; /* Shadow for fixed bar */
+            background-color: #e0e0e0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #555;
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: color 0.2s ease-in-out;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .nav-item:hover {
+            color: #4f46e5; /* Tailwind indigo-600 */
+        }
+
+        /* Specific style for active/home icon */
+        .nav-item.active .material-icons {
+            color: #4f46e5; /* Active color */
+            text-shadow: 2px 2px 4px #bebebe, /* Shadow for active icon */
+                         -2px -2px 4px #ffffff;
+            font-weight: bold;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .neumo-container {
+                padding: 20px;
+            }
+            .bottom-navbar {
+                padding: 0.75rem 0;
+                border-radius: 15px 15px 0 0;
+            }
+            .nav-item {
+                font-size: 0.7rem;
+            }
+            .neumo-icon-button {
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="notification-icon neumo-icon-button">
+            <span class="material-icons text-gray-700 text-2xl">notifications</span>
+            <span class="notification-badge">3</span>
+        </div>
+
+        <div class="neumo-icon-button">
+            <span class="material-icons text-gray-700 text-2xl">settings</span>
+        </div>
+    </div>
+
+    <div class="content-area">
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Welcome Home!</h1>
+        <p class="text-gray-600 text-lg mb-8">This is your main application content.</p>
+
+        <div class="neumo-soft p-8 w-11/12 md:w-3/4 max-w-md text-gray-700 text-left">
+            <h3 class="font-bold text-xl mb-4">Neumorphic Card</h3>
+            <p>This is an example of a content card with a soft neumorphic style. It blends seamlessly with the background.</p>
+            <button class="neumo-button mt-6 w-full py-3 text-lg">Learn More</button>
+        </div>
+    </div>
+
+    <nav class="bottom-navbar">
+        <a href="#" class="nav-item">
+            <span class="material-icons text-2xl">dashboard</span>
+            <span>Dashboard</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="material-icons text-2xl">explore</span>
+            <span>Explore</span>
+        </a>
+        <a href="#" class="nav-item active"> <span class="material-icons text-3xl">home</span> <span>Home</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="material-icons text-2xl">message</span>
+            <span>Messages</span>
+        </a>
+        <a href="#" class="nav-item">
+            <span class="material-icons text-2xl">person</span>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        // You could add JavaScript here to dynamically set the 'active' class
+        // based on the current page, or handle notification clicks etc.
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                // Remove active from all
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                // Add active to clicked item
+                this.classList.add('active');
+                // Prevent default link behavior for this demo
+                e.preventDefault();
+            });
+        });
+    </script>
+</body>
+</html>
+

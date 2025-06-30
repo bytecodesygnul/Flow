@@ -1,0 +1,219 @@
+{
+  "app_data": {
+    "version": "1.0.0",
+    "last_updated": "2025-06-29T00:12:57+08:00",
+    "common_components": {
+      "notification": {
+        "id": "string",
+        "type": "success | error | info | warning",
+        "message": "string",
+        "timestamp": "datetime"
+      },
+      "user_session": {
+        "token": "string | null",
+        "user_id": "string | null",
+        "is_logged_in": "boolean"
+      },
+      "tab_item_structure": {
+        "id": "string",
+        "label": "string",
+        "icon_name": "string",
+        "route": "string"
+      }
+    },
+    "authentication": {
+      "signup_data": {
+        "full_name": "string",
+        "email": "string",
+        "password": "string",
+        "phone_number": "string | optional",
+        "referral_code": "string | optional"
+      },
+      "login_data": {
+        "email": "string",
+        "password": "string"
+      },
+      "auth_response": {
+        "status": "success | error",
+        "message": "string",
+        "user_info": {
+          "user_id": "string",
+          "full_name": "string",
+          "email": "string",
+          "profile_picture_url": "string | null"
+        },
+        "token": "string"
+      }
+    },
+    "home_data": {
+      "welcome_message": "string",
+      "quick_access_links": [
+        {
+          "label": "string",
+          "icon": "string",
+          "route": "string"
+        }
+      ],
+      "recent_activity": [
+        {
+          "id": "string",
+          "type": "transaction | notification | update",
+          "description": "string",
+          "timestamp": "datetime"
+        }
+      ],
+      "promotions": [
+        {
+          "id": "string",
+          "title": "string",
+          "image_url": "string",
+          "link_url": "string"
+        }
+      ]
+    },
+    "profile_data": {
+      "user_details": {
+        "user_id": "string",
+        "full_name": "string",
+        "email": "string",
+        "phone_number": "string | null",
+        "profile_picture_url": "string | null",
+        "bio": "string | null",
+        "address": "string | null"
+      },
+      "settings": {
+        "notifications_enabled": "boolean",
+        "two_factor_auth_enabled": "boolean",
+        "dark_mode_enabled": "boolean"
+      },
+      "edit_profile_request": {
+        "full_name": "string | optional",
+        "bio": "string | optional",
+        "profile_picture_file": "file_object | string_base64 | optional"
+      }
+    },
+    "explore_data": {
+      "search_query": "string | null",
+      "categories": [
+        {
+          "id": "string",
+          "name": "string",
+          "is_active": "boolean"
+        }
+      ],
+      "listing_item": {
+        "id": "string",
+        "title": "string",
+        "image_url": "string",
+        "description": "string",
+        "tags": ["string"],
+        "views": "integer",
+        "uploaded_by_user_id": "string"
+      },
+      "product_listings": [
+        {
+          "id": "string",
+          "title": "string",
+          "image_url": "string",
+          "description": "string",
+          "tags": ["string"]
+        }
+      ]
+    },
+    "wallet_data": {
+      "balance_overview": {
+        "currency": "string",
+        "amount": "number",
+        "last_updated": "datetime"
+      },
+      "transactions": [
+        {
+          "id": "string",
+          "type": "deposit | withdrawal | transfer_in | transfer_out | investment_gain | investment_loss",
+          "description": "string",
+          "amount": "number",
+          "currency": "string",
+          "timestamp": "datetime",
+          "status": "pending | completed | failed"
+        }
+      ],
+      "sending_request": {
+        "bank_name": "string",
+        "account_number": "string",
+        "recipient_name": "string",
+        "amount": "number",
+        "currency": "string"
+      },
+      "deposit_request": {
+        "amount": "number",
+        "currency": "string",
+        "method": "bank_transfer | e_wallet | crypto",
+        "crypto_details": {
+          "coin_type": "string",
+          "address": "string",
+          "network": "string"
+        }
+      },
+      "portfolio_data": {
+        "ipo_monitoring": [
+          {
+            "id": "string",
+            "company_name": "string",
+            "status": "upcoming | subscribed | closed",
+            "shares_subscribed": "integer | null",
+            "offering_price": "number | null"
+          }
+        ],
+        "investments": [
+          {
+            "id": "string",
+            "name": "string",
+            "type": "stock | mutual_fund | fixed_deposit | other",
+            "current_value": "number",
+            "currency": "string",
+            "purchase_value": "number",
+            "gain_loss_percentage": "number",
+            "details": "string | optional"
+          }
+        ]
+      }
+    },
+    "market_data": {
+      "products": [
+        {
+          "id": "string",
+          "name": "string",
+          "image_url": "string | array_of_urls",
+          "description": "string",
+          "price": "number",
+          "currency": "string",
+          "contact_method": "email | phone | chat",
+          "seller_id": "string",
+          "listed_date": "datetime",
+          "is_wishlisted": "boolean | optional"
+        }
+      ],
+      "add_product_request": {
+        "name": "string",
+        "description": "string",
+        "price": "number",
+        "currency": "string",
+        "contact_method": "email | phone | chat",
+        "photos": ["file_object | string_base64"]
+      },
+      "wishlist_items": [
+        {
+          "product_id": "string",
+          "name": "string",
+          "image_url": "string",
+          "price": "number",
+          "currency": "string"
+        }
+      ],
+      "notification_status": {
+        "message": "string",
+        "type": "success | error | info"
+      }
+    }
+  }
+}

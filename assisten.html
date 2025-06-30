@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistant Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e0e0e0; /* Neumorphic base background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden; /* Prevent horizontal scroll when sidebar is out */
+        }
+
+        /* Neumorphic Common Styles */
+        .neumo-soft {
+            background: #e0e0e0;
+            border-radius: 15px; /* Adjust as needed */
+            box-shadow: 6px 6px 12px #bebebe,
+                        -6px -6px 12px #ffffff;
+        }
+
+        .neumo-concave { /* For elements that appear pressed in */
+            background: #e0e0e0;
+            border-radius: 15px;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+        }
+
+        .neumo-input, .neumo-textarea, .neumo-select {
+            background: #e0e0e0;
+            border: none;
+            outline: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #333;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+            transition: all 0.2s ease-in-out;
+            width: 100%;
+        }
+
+        .neumo-input:focus, .neumo-textarea:focus, .neumo-select:focus {
+            box-shadow: inset 2px 2px 5px #bebebe,
+                        inset -2px -2px 5px #ffffff,
+                        0 0 0 2px #6366f1; /* Tailwind's indigo-500 for focus ring */
+        }
+        .neumo-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%234a5568' class='w-6 h-6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5em;
+        }
+
+        .neumo-button {
+            background: #e0e0e0;
+            border: none;
+            outline: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 6px 6px 12px #bebebe,
+                        -6px -6px 12px #ffffff;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .neumo-button:hover {
+            box-shadow: 3px 3px 6px #bebebe,
+                        -3px -3px 6px #ffffff;
+            transform: translateY(1px);
+        }
+
+        .neumo-button:active {
+            box-shadow: inset 3px 3px 6px #bebebe,
+                        inset -3px -3px 6px #ffffff;
+            transform: translateY(0);
+        }
+
+        .neumo-icon-button {
+            background: #e0e0e0;
+            border-radius: 50%; /* For circular icons */
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 3px 3px 6px #bebebe,
+                        -3px -3px 6px #ffffff;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            color: #555;
+        }
+        .neumo-icon-button:hover {
+            box-shadow: 1px 1px 3px #bebebe,
+                        -1px -1px 3px #ffffff;
+            transform: translateY(1px);
+        }
+        .neumo-icon-button:active {
+            box-shadow: inset 2px 2px 4px #bebebe,
+                        inset -2px -2px 4px #ffffff;
+            transform: translateY(0);
+        }
+
+        .neumo-label {
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Layout Specific Styles */
+        #main-content {
+            flex-grow: 1;
+            padding: 2rem;
+            transition: margin-right 0.3s ease-in-out;
+            margin-right: 0; /* Default: no margin for sidebar */
+        }
+
+        #assistant-sidebar {
+            width: 300px;
+            min-width: 300px; /* Fixed width */
+            background: #e0e0e0;
+            box-shadow: -8px 0 16px rgba(0,0,0,0.1), /* Shadow on left side for sidebar */
+                        -8px 0 16px #ffffff;
+            position: fixed;
+            right: -300px; /* Hidden by default */
+            top: 0;
+            bottom: 0;
+            padding: 2rem;
+            transition: right 0.3s ease-in-out;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #assistant-sidebar.open {
+            right: 0; /* Slide in */
+        }
+
+        #toggle-sidebar-button {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            z-index: 1001; /* Above sidebar */
+        }
+
+        #assistant-sidebar.open + #main-content {
+            margin-right: 300px; /* Push main content when sidebar is open */
+        }
+
+        .organization-forms-container {
+            margin-top: 1.5rem;
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: #e0e0e0;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+        }
+        .organization-forms-container > div {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background: #e5e5e5; /* Slightly lighter inner background */
+            box-shadow: inset 3px 3px 6px #c9c9c9, inset -3px -3px 6px #f1f1f1;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #assistant-sidebar {
+                width: 80%; /* Wider on small screens */
+                min-width: 80%;
+                right: -80%;
+            }
+            #assistant-sidebar.open + #main-content {
+                margin-right: 80%;
+            }
+            #toggle-sidebar-button {
+                right: 10px;
+                top: 10px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toggle-sidebar-button" class="neumo-icon-button">
+        <span class="material-icons">menu</span>
+    </div>
+
+    <div id="main-content" class="flex flex-col items-center">
+        <div class="max-w-4xl w-full p-6 neumo-soft">
+            <h2 class="text-3xl font-bold text-gray-700 mb-6 text-center">Your Dashboard</h2>
+
+            <div class="text-gray-600 text-lg mb-8">
+                Welcome to your assistant dashboard! Click the <span class="material-icons text-xl align-middle">menu</span> icon on the top right to open your personal assistant.
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="neumo-concave p-6 text-center">
+                    <span class="material-icons text-5xl text-indigo-500 mb-4">analytics</span>
+                    <h3 class="text-xl font-semibold text-gray-700">Daily Overview</h3>
+                    <p class="text-gray-600 mt-2">See your key metrics and upcoming tasks at a glance.</p>
+                </div>
+                <div class="neumo-concave p-6 text-center">
+                    <span class="material-icons text-5xl text-green-500 mb-4">task_alt</span>
+                    <h3 class="text-xl font-semibold text-gray-700">Project Progress</h3>
+                    <p class="text-gray-600 mt-2">Track the status of your ongoing projects.</p>
+                </div>
+                <div class="neumo-concave p-6 text-center">
+                    <span class="material-icons text-5xl text-purple-500 mb-4">event</span>
+                    <h3 class="text-xl font-semibold text-gray-700">Upcoming Schedule</h3>
+                    <p class="text-gray-600 mt-2">View your appointments and deadlines.</p>
+                </div>
+                <div class="neumo-concave p-6 text-center">
+                    <span class="material-icons text-5xl text-yellow-500 mb-4">groups</span>
+                    <h3 class="text-xl font-semibold text-gray-700">Group Activities</h3>
+                    <p class="text-gray-600 mt-2">Collaborate with your teams and organizations.</p>
+                </div>
+            </div>
+
+            <p class="text-gray-500 mt-10 text-center text-sm">More content will appear here based on your activities.</p>
+        </div>
+    </div>
+
+    <div id="assistant-sidebar">
+        <h3 class="text-2xl font-bold text-gray-700 mb-6 text-center">Your Personal Assistant</h3>
+
+        <div class="mb-6">
+            <label for="assistantSearch" class="neumo-label">Search for Help</label>
+            <input type="text" id="assistantSearch" class="neumo-input" placeholder="e.g., 'How to add a task?'">
+        </div>
+
+        <div class="flex flex-col gap-4 mb-6">
+            <button id="addScheduleBtn" class="neumo-button flex items-center justify-center">
+                <span class="material-icons mr-2">event_available</span>Add to Jadwal (Schedule)
+            </button>
+            <button id="createProjectBtn" class="neumo-button flex items-center justify-center">
+                <span class="material-icons mr-2">note_add</span>Create Project
+            </button>
+            <button id="createOrganisationJobBtn" class="neumo-button flex items-center justify-center">
+                <span class="material-icons mr-2">work</span>Create Organisation Job List
+            </button>
+        </div>
+
+        <div id="organisationJobSection" class="organization-forms-container hidden">
+            <h4 class="text-lg font-semibold text-gray-800 mb-4 text-center">Job List for Which Organisation?</h4>
+
+            <div class="mb-4">
+                <label for="organisationType" class="neumo-label">Organisation Type</label>
+                <select id="organisationType" class="neumo-select">
+                    <option value="">Select Type</option>
+                    <option value="wedding">Wedding Organisasi</option>
+                    <option value="vendor">Vendor Organisasi</option>
+                    <option value="job">Job Organisasi</option>
+                </select>
+            </div>
+
+            <div id="weddingOrgForm" class="hidden">
+                <h5 class="font-bold text-gray-700 mb-2">Wedding Organisation Details</h5>
+                <input type="text" class="neumo-input mb-3" placeholder="Wedding Event Name">
+                <input type="date" class="neumo-input mb-3">
+                <textarea class="neumo-textarea" rows="3" placeholder="Wedding requirements..."></textarea>
+            </div>
+
+            <div id="vendorOrgForm" class="hidden">
+                <h5 class="font-bold text-gray-700 mb-2">Vendor Organisation Details</h5>
+                <input type="text" class="neumo-input mb-3" placeholder="Vendor Service Name">
+                <input type="text" class="neumo-input mb-3" placeholder="Service Category">
+                <textarea class="neumo-textarea" rows="3" placeholder="Vendor description..."></textarea>
+            </div>
+
+            <div id="jobOrgForm" class="hidden">
+                <h5 class="font-bold text-gray-700 mb-2">Job Organisation Details</h5>
+                <input type="text" class="neumo-input mb-3" placeholder="Job Title">
+                <input type="text" class="neumo-input mb-3" placeholder="Job Location">
+                <textarea class="neumo-textarea" rows="3" placeholder="Job description..."></textarea>
+            </div>
+
+            <button class="neumo-button w-full mt-4 bg-indigo-500 text-white" id="submitOrgJobBtn">Submit Job List</button>
+        </div>
+
+        <p class="text-gray-500 text-sm mt-auto text-center pt-4">Your intelligent helper.</p>
+    </div>
+
+    <script>
+        const toggleSidebarButton = document.getElementById('toggle-sidebar-button');
+        const assistantSidebar = document.getElementById('assistant-sidebar');
+        const mainContent = document.getElementById('main-content');
+
+        const assistantSearchInput = document.getElementById('assistantSearch');
+        const addScheduleBtn = document.getElementById('addScheduleBtn');
+        const createProjectBtn = document.getElementById('createProjectBtn');
+        const createOrganisationJobBtn = document.getElementById('createOrganisationJobBtn');
+
+        const organisationJobSection = document.getElementById('organisationJobSection');
+        const organisationTypeSelect = document.getElementById('organisationType');
+        const weddingOrgForm = document.getElementById('weddingOrgForm');
+        const vendorOrgForm = document.getElementById('vendorOrgForm');
+        const jobOrgForm = document.getElementById('jobOrgForm');
+        const submitOrgJobBtn = document.getElementById('submitOrgJobBtn');
+
+        // --- Sidebar Toggle Logic ---
+        toggleSidebarButton.addEventListener('click', () => {
+            assistantSidebar.classList.toggle('open');
+            mainContent.classList.toggle('pushed'); // Add/remove a class that dictates margin
+            if (assistantSidebar.classList.contains('open')) {
+                toggleSidebarButton.querySelector('.material-icons').textContent = 'close';
+                console.log("Hello world - Assistant Sidebar Opened");
+            } else {
+                toggleSidebarButton.querySelector('.material-icons').textContent = 'menu';
+                console.log("Hello world - Assistant Sidebar Closed");
+            }
+        });
+
+        // Add an event listener to the main content to close sidebar when clicking outside
+        mainContent.addEventListener('click', (event) => {
+            // Check if the click is outside the sidebar AND the toggle button
+            if (assistantSidebar.classList.contains('open') &&
+                !assistantSidebar.contains(event.target) &&
+                !toggleSidebarButton.contains(event.target)) {
+                assistantSidebar.classList.remove('open');
+                mainContent.classList.remove('pushed');
+                toggleSidebarButton.querySelector('.material-icons').textContent = 'menu';
+                console.log("Hello world - Assistant Sidebar Closed (Click outside)");
+            }
+        });
+
+        // Add a class for main-content to handle the margin push
+        // This is necessary because Tailwind's default classes might not transition smoothly
+        // without a dedicated class for this state.
+        const style = document.createElement('style');
+        style.textContent = `
+            #main-content.pushed {
+                margin-right: 300px; /* Desktop */
+            }
+            @media (max-width: 768px) {
+                #main-content.pushed {
+                    margin-right: 80%; /* Mobile */
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+
+        // --- Quick Action Button Logic ---
+        assistantSearchInput.addEventListener('input', () => {
+            if (assistantSearchInput.value.length > 0) {
+                 console.log(`Hello world - User searching for: "${assistantSearchInput.value}"`);
+            }
+        });
+
+        addScheduleBtn.addEventListener('click', () => {
+            console.log("Hello world - Add to Jadwal (Schedule) clicked");
+            alert("Conceptual: This would open a scheduling interface.");
+        });
+
+        createProjectBtn.addEventListener('click', () => {
+            console.log("Hello world - Create Project clicked");
+            alert("Conceptual: This would open a project creation form.");
+        });
+
+        createOrganisationJobBtn.addEventListener('click', () => {
+            organisationJobSection.classList.toggle('hidden');
+            if (!organisationJobSection.classList.contains('hidden')) {
+                console.log("Hello world - Create Organisation Job List section toggled ON");
+            } else {
+                console.log("Hello world - Create Organisation Job List section toggled OFF");
+                // Reset select and hide specific forms if section is closed
+                organisationTypeSelect.value = "";
+                weddingOrgForm.classList.add('hidden');
+                vendorOrgForm.classList.add('hidden');
+                jobOrgForm.classList.add('hidden');
+            }
+        });
+
+        // --- Organisation Type Selection Logic ---
+        organisationTypeSelect.addEventListener('change', () => {
+            const selectedType = organisationTypeSelect.value;
+            console.log(`Hello world - Organisation type selected: ${selectedType}`);
+
+            // Hide all specific forms first
+            weddingOrgForm.classList.add('hidden');
+            vendorOrgForm.classList.add('hidden');
+            jobOrgForm.classList.add('hidden');
+
+            // Show the relevant form based on selection
+            if (selectedType === 'wedding') {
+                weddingOrgForm.classList.remove('hidden');
+            } else if (selectedType === 'vendor') {
+                vendorOrgForm.classList.remove('hidden');
+            } else if (selectedType === 'job') {
+                jobOrgForm.classList.remove('hidden');
+            }
+        });
+
+        submitOrgJobBtn.addEventListener('click', () => {
+            const selectedType = organisationTypeSelect.value;
+            if (selectedType) {
+                console.log(`Hello world - Submitting Job List for: ${selectedType} Organisation`);
+                alert(`Conceptual: Submitting job list details for ${selectedType} Organisation.`);
+                // In a real app, collect data from the active form and send it.
+            } else {
+                alert("Please select an Organisation Type.");
+            }
+        });
+
+    </script>
+</body>
+</html>

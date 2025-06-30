@@ -1,0 +1,355 @@
+{
+  "app_data": {
+    "version": "1.0.0",
+    "last_updated": "2025-06-29T00:34:22+08:00",
+    "metadata": {
+      "location": "Balikpapan, East Kalimantan, Indonesia",
+      "timezone": "WITA"
+    },
+    "common_components": {
+      "notification": {
+        "id": "string",
+        "type": "success | error | info | warning",
+        "message": "string",
+        "timestamp": "datetime"
+      },
+      "user_session": {
+        "token": "string | null",
+        "user_id": "string | null",
+        "is_logged_in": "boolean"
+      },
+      "tab_item_structure": {
+        "id": "string",
+        "label": "string",
+        "icon_name": "string",
+        "route": "string"
+      },
+      "avatar": {
+        "user_id": "string",
+        "url": "string",
+        "alt_text": "string"
+      },
+      "media_file": {
+        "id": "string",
+        "url": "string",
+        "type": "image | video | audio",
+        "thumbnail_url": "string | null"
+      }
+    },
+    "authentication": {
+      "signup_request": {
+        "full_name": "string",
+        "email": "string",
+        "password": "string",
+        "phone_number": "string | optional",
+        "referral_code": "string | optional"
+      },
+      "login_request": {
+        "email": "string",
+        "password": "string"
+      },
+      "auth_response": {
+        "status": "success | error",
+        "message": "string",
+        "user_info": {
+          "user_id": "string",
+          "full_name": "string",
+          "email": "string",
+          "profile_picture_url": "string | null"
+        },
+        "token": "string"
+      }
+    },
+    "home_dashboard": {
+      "welcome_message": "string",
+      "quick_access_links": [
+        {
+          "label": "string",
+          "icon": "string",
+          "route": "string"
+        }
+      ],
+      "recent_activity": [
+        {
+          "id": "string",
+          "type": "transaction | notification | post | comment | event",
+          "description": "string",
+          "timestamp": "datetime",
+          "related_item_id": "string | null",
+          "related_item_type": "string | null"
+        }
+      ],
+      "promotions": [
+        {
+          "id": "string",
+          "title": "string",
+          "image_url": "string",
+          "link_url": "string"
+        }
+      ],
+      "dashboard_cards": [
+        {
+          "id": "string",
+          "title": "string",
+          "icon": "string",
+          "description": "string",
+          "data_point": "string | number | null",
+          "route": "string | null"
+        }
+      ]
+    },
+    "profile_management": {
+      "user_details": {
+        "user_id": "string",
+        "full_name": "string",
+        "email": "string",
+        "phone_number": "string | null",
+        "profile_picture_url": "string | null",
+        "bio": "string | null",
+        "address": "string | null",
+        "join_date": "datetime"
+      },
+      "settings": {
+        "notifications_enabled": "boolean",
+        "two_factor_auth_enabled": "boolean",
+        "dark_mode_enabled": "boolean",
+        "privacy_level": "public | friends | private"
+      },
+      "edit_profile_request": {
+        "full_name": "string | optional",
+        "bio": "string | optional",
+        "profile_picture_file_base64": "string | optional",
+        "profile_picture_file_name": "string | optional"
+      }
+    },
+    "explore_section": {
+      "search_query": "string | null",
+      "filters": {
+        "category": "string | null",
+        "price_range": { "min": "number | null", "max": "number | null" },
+        "location": "string | null"
+      },
+      "categories": [
+        {
+          "id": "string",
+          "name": "string",
+          "icon": "string | null",
+          "is_active": "boolean"
+        }
+      ],
+      "listing_item": {
+        "id": "string",
+        "title": "string",
+        "image_url": "string",
+        "description": "string",
+        "tags": ["string"],
+        "views": "integer",
+        "uploaded_by_user_id": "string",
+        "upload_date": "datetime"
+      },
+      "product_listings": [
+        {
+          "id": "string",
+          "title": "string",
+          "image_url": "string",
+          "description": "string",
+          "price": "number",
+          "currency": "string",
+          "seller_info": {
+            "user_id": "string",
+            "username": "string"
+          },
+          "is_wishlisted": "boolean | optional"
+        }
+      ]
+    },
+    "wallet_financials": {
+      "balance_overview": {
+        "currency": "string",
+        "amount": "number",
+        "last_updated": "datetime"
+      },
+      "transactions": [
+        {
+          "id": "string",
+          "type": "deposit | withdrawal | transfer_in | transfer_out | investment_gain | investment_loss | purchase | sale",
+          "description": "string",
+          "amount": "number",
+          "currency": "string",
+          "timestamp": "datetime",
+          "status": "pending | completed | failed",
+          "transaction_code": "string | null"
+        }
+      ],
+      "sending_request": {
+        "bank_name": "string",
+        "account_number": "string",
+        "recipient_name": "string",
+        "amount": "number",
+        "currency": "string",
+        "notes": "string | optional"
+      },
+      "deposit_request": {
+        "amount": "number",
+        "currency": "string",
+        "method": "bank_transfer | e_wallet | crypto",
+        "details": {
+          "bank_name": "string | optional",
+          "account_number": "string | optional",
+          "crypto_type": "string | optional",
+          "crypto_address": "string | optional",
+          "network": "string | optional"
+        }
+      },
+      "portfolio_data": {
+        "ipo_monitoring": [
+          {
+            "id": "string",
+            "company_name": "string",
+            "status": "upcoming | subscribed | closed | allocated",
+            "shares_subscribed": "integer | null",
+            "offering_price": "number | null",
+            "allotment_status": "string | null",
+            "listing_date": "date | null"
+          }
+        ],
+        "investments": [
+          {
+            "id": "string",
+            "name": "string",
+            "type": "stock | mutual_fund | fixed_deposit | bond | other",
+            "current_value": "number",
+            "currency": "string",
+            "purchase_value": "number",
+            "gain_loss_percentage": "number",
+            "quantity": "number",
+            "details": "string | optional"
+          }
+        ]
+      }
+    },
+    "market_ecommerce": {
+      "products": [
+        {
+          "id": "string",
+          "name": "string",
+          "image_urls": ["string"],
+          "description": "string",
+          "price": "number",
+          "currency": "string",
+          "contact_method": "email | phone | chat",
+          "seller_id": "string",
+          "listed_date": "datetime",
+          "category": "string | null",
+          "stock_quantity": "integer | null",
+          "is_wishlisted": "boolean | optional"
+        }
+      ],
+      "add_product_request": {
+        "name": "string",
+        "description": "string",
+        "price": "number",
+        "currency": "string",
+        "contact_method": "email | phone | chat",
+        "photos_base64": ["string"],
+        "category": "string | optional",
+        "stock_quantity": "integer | optional"
+      },
+      "wishlist_items": [
+        {
+          "product_id": "string",
+          "name": "string",
+          "image_url": "string",
+          "price": "number",
+          "currency": "string",
+          "added_date": "datetime"
+        }
+      ],
+      "market_notification": {
+        "message": "string",
+        "type": "success | error | info"
+      }
+    },
+    "social_feed": {
+      "stories": [
+        {
+          "id": "string",
+          "user_id": "string",
+          "username": "string",
+          "user_avatar_url": "string",
+          "media_url": "string",
+          "media_type": "image | video",
+          "uploaded_at": "datetime",
+          "is_seen": "boolean"
+        }
+      ],
+      "posts": [
+        {
+          "id": "string",
+          "user_id": "string",
+          "username": "string",
+          "user_avatar_url": "string",
+          "content_text": "string",
+          "media": {
+            "url": "string | null",
+            "type": "image | video | null"
+          },
+          "posted_at": "datetime",
+          "likes_count": "integer",
+          "comments": [
+            {
+              "id": "string",
+              "user_id": "string",
+              "username": "string",
+              "user_avatar_url": "string",
+              "comment_text": "string",
+              "commented_at": "datetime"
+            }
+          ]
+        }
+      ],
+      "create_post_request": {
+        "content_text": "string",
+        "media_file_base64": "string | null",
+        "media_file_type": "image | video | null"
+      },
+      "media_editing_options": {
+        "edit_video_enabled": "boolean",
+        "add_music_enabled": "boolean",
+        "filters_available": ["string"]
+      }
+    },
+    "assistant_dashboard": {
+      "sidebar_open_status": "boolean",
+      "search_query": "string | null",
+      "quick_actions": [
+        {
+          "id": "string",
+          "label": "string",
+          "icon": "string",
+          "action_type": "schedule | project | job_list"
+        }
+      ],
+      "organisation_job_listing": {
+        "is_active": "boolean",
+        "selected_type": "wedding | vendor | job | null",
+        "wedding_org_details": {
+          "event_name": "string",
+          "event_date": "date",
+          "requirements": "string"
+        },
+        "vendor_org_details": {
+          "service_name": "string",
+          "service_category": "string",
+          "description": "string"
+        },
+        "job_org_details": {
+          "job_title": "string",
+          "job_location": "string",
+          "description": "string"
+        },
+        "submission_status_message": "string | null"
+      }
+    }
+  }
+}

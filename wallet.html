@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Wallet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            background-color: #e0e0e0; /* Neumorphic base background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Neumorphic Common Styles */
+        .neumo-soft {
+            background: #e0e0e0;
+            border-radius: 15px; /* Adjust as needed */
+            box-shadow: 6px 6px 12px #bebebe,
+                        -6px -6px 12px #ffffff;
+        }
+
+        .neumo-concave { /* For elements that appear pressed in */
+            background: #e0e0e0;
+            border-radius: 15px;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+        }
+
+        .neumo-input {
+            background: #e0e0e0;
+            border: none;
+            outline: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #333;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+            transition: all 0.2s ease-in-out;
+            width: 100%;
+        }
+
+        .neumo-input:focus {
+            box-shadow: inset 2px 2px 5px #bebebe,
+                        inset -2px -2px 5px #ffffff,
+                        0 0 0 2px #6366f1; /* Tailwind's indigo-500 for focus ring */
+        }
+
+        .neumo-button {
+            background: #e0e0e0;
+            border: none;
+            outline: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 6px 6px 12px #bebebe,
+                        -6px -6px 12px #ffffff;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+
+        .neumo-button:hover {
+            box-shadow: 3px 3px 6px #bebebe,
+                        -3px -3px 6px #ffffff;
+            transform: translateY(1px);
+        }
+
+        .neumo-button:active {
+            box-shadow: inset 3px 3px 6px #bebebe,
+                        inset -3px -3px 6px #ffffff;
+            transform: translateY(0);
+        }
+
+        .neumo-label {
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .neumo-select {
+            appearance: none; /* Remove default arrow */
+            background: #e0e0e0;
+            border: none;
+            outline: none;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 1rem;
+            color: #333;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+            transition: all 0.2s ease-in-out;
+            width: 100%;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%234a5568' class='w-6 h-6'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='m19.5 8.25-7.5 7.5-7.5-7.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.5em;
+        }
+        .neumo-select:focus {
+            box-shadow: inset 2px 2px 5px #bebebe,
+                        inset -2px -2px 5px #ffffff,
+                        0 0 0 2px #6366f1;
+        }
+
+
+        /* Wallet Specific Styles */
+        .header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .wallet-container {
+            max-width: 900px;
+            margin: 1rem auto;
+            padding: 2rem;
+            border-radius: 20px;
+            background: #e0e0e0;
+            box-shadow: 9px 9px 18px #bebebe,
+                        -9px -9px 18px #ffffff;
+            flex-grow: 1;
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, #6366f1, #4f46e5); /* Indigo gradient for balance */
+            color: white;
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 8px 8px 16px rgba(0,0,0,0.2), -8px -8px 16px rgba(255,255,255,0.2);
+            text-align: center;
+        }
+        .balance-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+        }
+        .balance-card p {
+            font-size: 3rem;
+            font-weight: bold;
+            letter-spacing: -1px;
+        }
+
+        .activity-tabs {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+            background: #e0e0e0;
+            border-radius: 15px;
+            padding: 10px;
+            box-shadow: inset 3px 3px 6px #bebebe,
+                        inset -3px -3px 6px #ffffff;
+            overflow-x: auto; /* Allow horizontal scrolling on small screens */
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+        }
+
+        .activity-tab-item {
+            flex-shrink: 0; /* Prevent items from shrinking */
+            padding: 10px 20px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            color: #777;
+            white-space: nowrap; /* Prevent text wrapping */
+            transition: all 0.2s ease-in-out;
+        }
+
+        .activity-tab-item.active {
+            background: #e0e0e0;
+            color: #333;
+            box-shadow: 4px 4px 8px #bebebe,
+                        -4px -4px 8px #ffffff;
+        }
+
+        .activity-tab-item:not(.active):hover {
+            color: #4f46e5;
+        }
+
+        .tab-content {
+            padding: 1.5rem;
+            border-radius: 15px;
+            background: #e0e0e0;
+            box-shadow: inset 5px 5px 10px #bebebe,
+                        inset -5px -5px 10px #ffffff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .confirmation-message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            background-color: #d1fae5; /* Tailwind green-100 */
+            color: #065f46; /* Tailwind green-800 */
+            border: 1px solid #10b981; /* Tailwind green-500 */
+            display: none; /* Hidden by default */
+        }
+        .confirmation-message.show {
+            display: block;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .wallet-container {
+                margin: 0.5rem;
+                padding: 1rem;
+            }
+            .balance-card p {
+                font-size: 2.5rem;
+            }
+            .activity-tab-item {
+                padding: 8px 15px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="neumo-button p-2 rounded-full flex items-center justify-center">
+            <span class="material-icons text-gray-700">arrow_back</span>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-700">My Wallet</h2>
+        <div class="w-10 h-10"></div> </div>
+
+    <div class="wallet-container">
+        <div class="balance-card">
+            <h3>Current Balance</h3>
+            <p>Rp 12.345.678</p>
+        </div>
+
+        <div class="activity-tabs">
+            <div id="balanceTab" class="activity-tab-item active" data-tab="balance">Balance</div>
+            <div id="sendingTab" class="activity-tab-item" data-tab="sending">Sending</div>
+            <div id="depositTab" class="activity-tab-item" data-tab="deposit">Deposit</div>
+            <div id="portfolioTab" class="activity-tab-item" data-tab="portfolio">Portfolio</div>
+        </div>
+
+        <div id="balanceContent" class="tab-content">
+            <h3 class="text-xl font-semibold text-gray-700 mb-4">Recent Transactions</h3>
+            <div class="text-gray-600 space-y-3">
+                <div class="flex justify-between items-center neumo-soft p-3">
+                    <span>Deposit from Bank XYZ</span><span class="font-bold text-green-600">+ Rp 500.000</span>
+                </div>
+                <div class="flex justify-between items-center neumo-soft p-3">
+                    <span>Transfer to John Doe</span><span class="font-bold text-red-600">- Rp 150.000</span>
+                </div>
+                <div class="flex justify-between items-center neumo-soft p-3">
+                    <span>Investment Gain (IPO)</span><span class="font-bold text-green-600">+ Rp 75.000</span>
+                </div>
+            </div>
+            <p class="text-gray-500 mt-4 text-center">More transactions...</p>
+        </div>
+
+        <div id="sendingContent" class="tab-content hidden">
+            <h3 class="text-xl font-semibold text-gray-700 mb-6">Send Money</h3>
+
+            <div class="mb-4">
+                <label for="bankName" class="neumo-label">Bank Name</label>
+                <select id="bankName" class="neumo-select">
+                    <option value="">Select Bank</option>
+                    <option value="bca">Bank BCA</option>
+                    <option value="mandiri">Bank Mandiri</option>
+                    <option value="bri">Bank BRI</option>
+                    <option value="bni">Bank BNI</option>
+                    <option value="other">Other Bank</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="accountNumber" class="neumo-label">Nomor Rekening Bank</label>
+                <input type="number" id="accountNumber" class="neumo-input" placeholder="e.g., 1234567890">
+            </div>
+
+            <div class="mb-4">
+                <label for="confirmationName" class="neumo-label">Confirmation Name (Client ID)</label>
+                <input type="text" id="confirmationName" class="neumo-input" placeholder="Verify recipient name">
+                <p id="nameVerificationStatus" class="text-sm mt-2 text-gray-600"></p>
+            </div>
+
+            <div class="mb-6">
+                <label for="amountToSend" class="neumo-label">Amount to Send</label>
+                <input type="number" id="amountToSend" class="neumo-input" placeholder="e.g., 100000">
+            </div>
+
+            <button id="sendMoneyButton" class="neumo-button w-full">Send Now</button>
+
+            <div id="sendingConfirmation" class="confirmation-message mt-4">
+                Transfer confirmed to <span id="confirmedRecipientName" class="font-bold"></span>!
+            </div>
+        </div>
+
+        <div id="depositContent" class="tab-content hidden">
+            <h3 class="text-xl font-semibold text-gray-700 mb-6">Deposit Funds</h3>
+
+            <div class="mb-4">
+                <label for="depositAmount" class="neumo-label">Amount to Deposit</label>
+                <input type="number" id="depositAmount" class="neumo-input" placeholder="e.g., 500000">
+            </div>
+
+            <div class="mb-6">
+                <label for="depositMethod" class="neumo-label">Deposit Method</label>
+                <select id="depositMethod" class="neumo-select">
+                    <option value="bank_transfer">Bank Transfer</option>
+                    <option value="e_wallet">E-Wallet</option>
+                    <option value="crypto">Crypto Currency</option>
+                </select>
+            </div>
+
+            <div id="cryptoDepositInfo" class="hidden neumo-soft p-4 mb-6 text-sm text-gray-700">
+                <p class="font-bold mb-2">Deposit Crypto (ERC-20 USDT)</p>
+                <p>Send USDT to the address below:</p>
+                <div class="neumo-input text-xs break-all flex items-center justify-between mt-2 cursor-pointer" onclick="navigator.clipboard.writeText('0xAbCdEf1234567890AbCdEf1234567890AbCdEf12')">
+                    <span>0xAbCdEf1234567890AbCdEf1234567890AbCdEf12</span>
+                    <span class="material-icons ml-2 text-base text-gray-500">content_copy</span>
+                </div>
+                <p class="text-red-500 mt-2">Only send USDT (ERC-20). Sending other coins may result in loss.</p>
+            </div>
+
+            <button id="depositButton" class="neumo-button w-full">Proceed to Deposit</button>
+        </div>
+
+        <div id="portfolioContent" class="tab-content hidden">
+            <h3 class="text-xl font-semibold text-gray-700 mb-6">Investment Portfolio</h3>
+
+            <div class="neumo-soft p-4 mb-6">
+                <h4 class="font-bold text-lg text-gray-800 mb-3">IPO Monitoring</h4>
+                <div class="text-gray-700 space-y-2">
+                    <div class="flex justify-between border-b pb-1 border-gray-300">
+                        <span>Company A IPO:</span><span class="font-semibold text-blue-600">Upcoming</span>
+                    </div>
+                    <div class="flex justify-between border-b pb-1 border-gray-300">
+                        <span>Company B IPO:</span><span class="font-semibold text-green-600">Subscribed (500 shares)</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span>Company C IPO:</span><span class="font-semibold text-red-600">Closed</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="neumo-soft p-4">
+                <h4 class="font-bold text-lg text-gray-800 mb-3">My Investments</h4>
+                <div class="text-gray-700 space-y-2">
+                    <div class="flex justify-between items-center border-b pb-1 border-gray-300">
+                        <div>
+                            <p class="font-semibold">Stock X</p>
+                            <span class="text-sm text-gray-500">10 shares @ Rp 1,500</span>
+                        </div>
+                        <span class="font-bold text-green-600">+1.2%</span>
+                    </div>
+                    <div class="flex justify-between items-center border-b pb-1 border-gray-300">
+                        <div>
+                            <p class="font-semibold">Mutual Fund Y</p>
+                            <span class="text-sm text-gray-500">NAV Rp 1,234</span>
+                        </div>
+                        <span class="font-bold text-red-600">-0.5%</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">Fixed Deposit</p>
+                            <span class="text-sm text-gray-500">Rp 5.000.000</span>
+                        </div>
+                        <span class="font-bold text-gray-600">Stable</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const balanceTab = document.getElementById('balanceTab');
+        const sendingTab = document.getElementById('sendingTab');
+        const depositTab = document.getElementById('depositTab');
+        const portfolioTab = document.getElementById('portfolioTab');
+
+        const balanceContent = document.getElementById('balanceContent');
+        const sendingContent = document.getElementById('sendingContent');
+        const depositContent = document.getElementById('depositContent');
+        const portfolioContent = document.getElementById('portfolioContent');
+
+        const accountNumberInput = document.getElementById('accountNumber');
+        const confirmationNameInput = document.getElementById('confirmationName');
+        const nameVerificationStatus = document.getElementById('nameVerificationStatus');
+        const sendMoneyButton = document.getElementById('sendMoneyButton');
+        const sendingConfirmation = document.getElementById('sendingConfirmation');
+        const confirmedRecipientName = document.getElementById('confirmedRecipientName');
+
+        const depositMethodSelect = document.getElementById('depositMethod');
+        const cryptoDepositInfo = document.getElementById('cryptoDepositInfo');
+        const depositButton = document.getElementById('depositButton');
+
+        const knownAccounts = {
+            "1234567890": "John Doe",
+            "0987654321": "Jane Smith"
+        }; // Mock data for account verification
+
+        // Function to switch tabs
+        function switchTab(activeTabId) {
+            console.log("Hello world - Tab Activated:", activeTabId); // Console log on tab activation
+
+            // Remove active class from all tabs
+            document.querySelectorAll('.activity-tab-item').forEach(tab => tab.classList.remove('active'));
+            // Hide all tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+
+            // Add active class to the clicked tab
+            document.getElementById(activeTabId).classList.add('active');
+            // Show the corresponding content
+            document.getElementById(activeTabId.replace('Tab', 'Content')).classList.remove('hidden');
+
+            // Specific logic for Deposit tab to show/hide crypto info
+            if (activeTabId === 'depositTab') {
+                toggleCryptoDepositInfo();
+            } else {
+                cryptoDepositInfo.classList.add('hidden');
+            }
+        }
+
+        // Event Listeners for Tabs
+        balanceTab.addEventListener('click', () => switchTab('balanceTab'));
+        sendingTab.addEventListener('click', () => switchTab('sendingTab'));
+        depositTab.addEventListener('click', () => switchTab('depositTab'));
+        portfolioTab.addEventListener('click', () => switchTab('portfolioTab'));
+
+        // Sending Tab: Account Number and Name Confirmation Logic
+        accountNumberInput.addEventListener('input', function() {
+            const accountNumber = this.value;
+            if (accountNumber && knownAccounts[accountNumber]) {
+                const clientName = knownAccounts[accountNumber];
+                nameVerificationStatus.textContent = `Account holder: ${clientName}`;
+                nameVerificationStatus.className = 'text-sm mt-2 text-green-600';
+                confirmationNameInput.value = clientName; // Auto-fill for convenience
+            } else if (accountNumber.length > 5) { // Simple check for some input
+                nameVerificationStatus.textContent = "Account not found or invalid.";
+                nameVerificationStatus.className = 'text-sm mt-2 text-red-600';
+                confirmationNameInput.value = '';
+            } else {
+                nameVerificationStatus.textContent = "";
+                confirmationNameInput.value = '';
+            }
+        });
+
+        sendMoneyButton.addEventListener('click', function() {
+            const bank = document.getElementById('bankName').value;
+            const accountNum = accountNumberInput.value;
+            const confirmedName = confirmationNameInput.value;
+            const amount = document.getElementById('amountToSend').value;
+
+            if (bank && accountNum && confirmedName && amount) {
+                // Mock confirmation: Check if the confirmed name matches the "verified" name
+                if (knownAccounts[accountNum] && knownAccounts[accountNum].toLowerCase() === confirmedName.toLowerCase()) {
+                    confirmedRecipientName.textContent = confirmedName;
+                    sendingConfirmation.classList.add('show');
+                    alert(`Sending Rp ${amount} to ${confirmedName} at ${bank} (${accountNum}). Check console for "Hello world" confirmation.`);
+                    console.log("Hello world - Sending Money confirmed!");
+                    // In a real app, you'd send this data to a backend.
+                } else {
+                    alert("Name confirmation failed. Please check the account number and name.");
+                }
+            } else {
+                alert("Please fill in all sending details.");
+            }
+        });
+
+        // Deposit Tab: Crypto Currency Info Toggle
+        depositMethodSelect.addEventListener('change', toggleCryptoDepositInfo);
+
+        function toggleCryptoDepositInfo() {
+            if (depositMethodSelect.value === 'crypto') {
+                cryptoDepositInfo.classList.remove('hidden');
+            } else {
+                cryptoDepositInfo.classList.add('hidden');
+            }
+        }
+
+        depositButton.addEventListener('click', function() {
+            const amount = document.getElementById('depositAmount').value;
+            const method = depositMethodSelect.value;
+            if (amount && method) {
+                alert(`Proceeding to deposit Rp ${amount} via ${method}. Check console for "Hello world" confirmation.`);
+                console.log("Hello world - Deposit initiated!");
+                // In a real app, this would lead to a payment gateway or instructions.
+            } else {
+                alert("Please enter deposit amount and select method.");
+            }
+        });
+
+
+        // Initialize with Balance tab active
+        switchTab('balanceTab');
+    </script>
+</body>
+</html>
